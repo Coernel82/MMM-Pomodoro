@@ -16,7 +16,7 @@ cd ~/MagicMirror/modules
 ```
 Then clone this git repository:
 ```
-git clone https://github.com/Klettner/MMM-Pomodoro.git
+git clone https://github.com/imtoanle/MMM-Pomodoro.git
 ```
 You can update this module by using
 ```
