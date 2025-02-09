@@ -244,8 +244,12 @@ Module.register("MMM-Pomodoro", {
 
 	removeOverlay: function() {
 		const overlay = document.getElementById("overlay");
-		overlay.parentNode.removeChild(overlay);
-		document.body.removeChild(this.ntf);
+		if (overlay && overlay.parentNode) {
+			overlay.parentNode.removeChild(overlay);
+		}
+		if (this.ntf && document.body.contains(this.ntf)) {
+			document.body.removeChild(this.ntf);
+		}
 		this.isVisible = false;
 		this.firstMessage = true;
 		this.nextType = null;
