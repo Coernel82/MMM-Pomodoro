@@ -51,4 +51,11 @@ The following options can be configured in the config.js file:
 | **Option** | **Description**|
 |------------|----------------|
 | ``` animation ``` | Controls if the timer/stopwatch should be animated. **Default:** *true* |
+| ```longRelaxTime```     | Time for a long relaxation break (default: 30*60 seconds) |
+| ```shortRelaxTime```    | Time for a short relaxation break (default: 5*60 seconds) |
+| ```pomodoroTime```      | Duration of a pomodoro session (default: 25*60 seconds) |
+| ```startArea```         | Defines the rectangular area for initiating the timer. Format: `{ x: 0, y: 0, width: 240, height: 240 }`. Touch or click within this area will start the timer. |
+| ```togglePauseArea```   | Defines the rectangular area for toggling pause. Format: `{ x: 240, y: 0, width: 240, height: 240 }`. Touch or click within this area pauses or unpauses the timer/stopwatch. |
+| ```interruptArea```     | Defines the rectangular area for interruption. Format: `{ x: 480, y: 0, width: 240, height: 240 }`. Touch or click within this area will interrupt the current session. |
 
+Above options allow for intuitive touch or click control on devices with a touchscreen. The defined area coordinates determine which section of the interface responds to the respective control actions. These areas are *invisible*!

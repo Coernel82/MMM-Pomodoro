@@ -7,7 +7,10 @@ Module.register("MMM-Pomodoro", {
 		animation: true,
 		longRelaxTime: 30*60,
 		shortRelaxTime: 5*60,
-		pomodoroTime: 25*60
+		pomodoroTime: 25*60,
+	 	startArea: { x: 0, y: 0, width: 240, height: 240 },
+		togglePauseArea: { x: 240, y: 0, width: 240, height: 240 },
+		interruptArea: { x: 480, y: 0, width: 240, height: 240 } 
 	},
 
 	getStyles: function() {
@@ -44,6 +47,9 @@ Module.register("MMM-Pomodoro", {
 		let now = new Date();
 		let millisecondsToNextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) - now;
 
+		// activate the touch areas
+		this.startTouchAreas();
+
 		// Call once at 0am next day
 		setTimeout(function() {
 			self.sendSocketNotification("MMM-Pomodoro-UPDATEDOM", {});
@@ -55,38 +61,99 @@ Module.register("MMM-Pomodoro", {
 		}, millisecondsToNextDay);
 	},
 
+	startTouchAreas: function() {
+		document.addEventListener("click", (event) => {
+			const x = event.clientX;
+			const y = event.clientY;
+			
+			// Check the START_TIMER area
+			console.log(`Click detected at x: ${x}, y: ${y}`);
+			if (
+				x >= self.config.startArea.x &&
+				x <= (self.config.startArea.x + self.config.startArea.width) &&
+				y >= self.config.startArea.y &&
+				y <= (self.config.startArea.y + self.config.startArea.height)
+			) {
+				console.log("START_TIMER area clicked");
+				if (self.isVisible && self.nextType) {
+					self.agreeClicked(self.nextType)();
+				} else {
+					self.startTimer(self.config.pomodoroTime, "pomodoro");
+				}
+			}
+			// Check the toggle PAUSE/UNPAUSE area
+			else if (
+				x >= self.config.togglePauseArea.x &&
+				x <= (self.config.togglePauseArea.x + self.config.togglePauseArea.width) &&
+				y >= self.config.togglePauseArea.y &&
+				y <= (self.config.togglePauseArea.y + self.config.togglePauseArea.height)
+			) {
+				if (self.pomodoro) {
+					console.log("PAUSE_POMODORO area clicked");
+					clearInterval(self.pomodoro);
+					self.pomodoro = null;
+				} else {
+					console.log("UNPAUSE_TIMER area clicked");
+					if(self.minutes > -1 && self.seconds > -1) {
+						self.initialisePomodoro(true);
+					}
+				}
+			}
+			// Check the INTERRUPT_POMODORO area
+			else if (
+				x >= self.config.interruptArea.x &&
+				x <= (self.config.interruptArea.x + self.config.interruptArea.width) &&
+				y >= self.config.interruptArea.y &&
+				y <= (self.config.interruptArea.y + self.config.interruptArea.height)
+			) {
+				console.log("INTERRUPT_POMODORO area clicked");
+				self.stopTimer();
+			}
+		});
+	},
+
+	
+	
+
 	notificationReceived: function(notification, payload, sender) {
 		switch(notification) {
 			case "START_TIMER":
-			if (this.isVisible && this.nextType) {
-				self.agreeClicked(this.nextType)();
-			} else {
-				if (payload)
-					this.startTimer(payload.seconds, payload.type);
-				else
-				this.startTimer(this.config.pomodoroTime, "pomodoro");
-			}
-			break
-		case "INTERRUPT_POMODORO":
-			this.stopTimer();
-			break
-		case "PAUSE_POMODORO":
-			clearInterval(this.pomodoro);
-			break
-		case "UNPAUSE_TIMER":
-			if(this.minutes > -1 && this.seconds > -1) {
-				this.initialisePomodoro(true);
-			}
-			break
-		case "START_STOPWATCH":
-			this.minutes = 0;
-			this.seconds = 0;
-			this.initialisePomodoro(false);
-			break
-		case "UNPAUSE_STOPWATCH":
-			if(this.minutes > -1 && this.seconds > -1) {
+				console.log("Notification received: START_TIMER");
+				if (this.isVisible && this.nextType) {
+					self.agreeClicked(this.nextType)();
+				} else {
+					if (payload)
+						this.startTimer(payload.seconds, payload.type);
+					else
+						this.startTimer(this.config.pomodoroTime, "pomodoro");
+				}
+				break;
+			case "INTERRUPT_POMODORO":
+				console.log("Notification received: INTERRUPT_POMODORO");
+				this.stopTimer();
+				break;
+			case "PAUSE_POMODORO":
+				console.log("Notification received: PAUSE_POMODORO");
+				clearInterval(this.pomodoro);
+				break;
+			case "UNPAUSE_TIMER":
+				console.log("Notification received: UNPAUSE_TIMER");
+				if(this.minutes > -1 && this.seconds > -1) {
+					this.initialisePomodoro(true);
+				}
+				break;
+			case "START_STOPWATCH":
+				console.log("Notification received: START_STOPWATCH");
+				this.minutes = 0;
+				this.seconds = 0;
 				this.initialisePomodoro(false);
-			}
+				break;
+			case "UNPAUSE_STOPWATCH":
+				console.log("Notification received: UNPAUSE_STOPWATCH");
+				if(this.minutes > -1 && this.seconds > -1) {
+					this.initialisePomodoro(false);
+				}
+				break;
 		}
 	},
 
