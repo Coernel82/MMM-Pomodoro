@@ -19,7 +19,7 @@
   border-style: solid;
   border-color: #666;
 }
-
+/* this class defines the position of the notification */
 .ns-alert {
   border-style: solid;
   border-color: #fff;
@@ -35,11 +35,14 @@
   left: 0;
   margin-right: auto;
   margin-left: auto;
-  top: 40%;
   width: 30%;
   height: auto;
   word-wrap: break-word;
   border-radius: 20px;
+}
+
+.ns-alert:first-child {
+  top: 40%;
 }
 
 .black_overlay {

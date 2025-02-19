@@ -59,3 +59,32 @@ The following options can be configured in the config.js file:
 | ```interruptArea```     | Defines the rectangular area for interruption. Format: `{ x: 480, y: 0, width: 240, height: 240 }`. Touch or click within this area will interrupt the current session. |
 
 Above options allow for intuitive touch or click control on devices with a touchscreen. The defined area coordinates determine which section of the interface responds to the respective control actions. These areas are *invisible*!
+
+# Styling
+The main styling is done with `ns-alert` - which being a German is a perculiar name for a css class... Below the default:
+```css
+.ns-alert {
+  border-style: solid;
+  border-color: #fff;
+  padding: 17px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  z-index: 3;
+  color: white;
+  font-size: 100%;
+  position: unset;
+  text-align: center;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 30%;
+  height: auto;
+  word-wrap: break-word;
+  border-radius: 20px;
+}
+
+.ns-alert:first-child {  // this makes sure that the buttons after the timer has run out are visible
+  top: 40%;
+}
+```
